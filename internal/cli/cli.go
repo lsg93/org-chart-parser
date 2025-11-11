@@ -46,14 +46,14 @@ func parseArguments() (OrgChartParserInput, error) {
 }
 
 func validateArguments(args []string) error {
+	if len(args) != 3 {
+		return errArgValidationIncorrectArgumentAmount
+	}
+
 	for _, item := range args {
 		if strings.TrimSpace(item) == "" {
 			return errArgValidationBlankArgumentProvided
 		}
-	}
-
-	if len(args) != 3 {
-		return errArgValidationIncorrectArgumentAmount
 	}
 
 	return nil
