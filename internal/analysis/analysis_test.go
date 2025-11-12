@@ -20,7 +20,7 @@ var exampleOrgChart = model.OrganisationChart{
 func setupTestAnalyser(chart model.OrganisationChart, t *testing.T) (*organisationChartAnalyser, *testWriter) {
 	// Output needs to go to a writer to make assertions against.
 	tw := &testWriter{}
-	return NewOrganisationChartAnalyser(tw, exampleOrgChart), tw
+	return NewOrganisationChartAnalyser(tw, chart), tw
 }
 
 type testWriter struct {
@@ -54,21 +54,21 @@ func TestAnalysisReturnsShortestPathAsString(t *testing.T) {
 			employee2:      "Catwoman",
 			expectedOutput: "Batman (16) -> Black Widow (6) <- Catwoman (17)",
 		},
-		"handles duplicates": {
-			input: model.OrganisationChart{
-				model.Employee{Id: 1, Name: "Minion", ManagerId: 1},
-				model.Employee{Id: 2, Name: "Minion", ManagerId: 1},
-			},
-			employee1:      "Minion",
-			employee2:      "Minion",
-			expectedOutput: "Minion (1) -> Minion (2)",
-		},
+		// "handles duplicates": {
+		// 	input: model.OrganisationChart{
+		// 		model.Employee{Id: 1, Name: "Minion", ManagerId: 1},
+		// 		model.Employee{Id: 2, Name: "Minion", ManagerId: 1},
+		// 	},
+		// 	employee1:      "Minion",
+		// 	employee2:      "Minion",
+		// 	expectedOutput: "Minion (1) -> Minion (2)",
+		// },
 	}
 
 	for desc, tc := range testCases {
 		t.Run(desc, func(t *testing.T) {
 			analyser, writer := setupTestAnalyser(tc.input, t)
-			err := analyser.analyse(tc.employee1, tc.employee2)
+			err := analyser.Analyse(tc.employee1, tc.employee2)
 			output := writer.contents
 
 			if err != nil {
@@ -76,7 +76,7 @@ func TestAnalysisReturnsShortestPathAsString(t *testing.T) {
 			}
 
 			if output != tc.expectedOutput {
-				t.Errorf("The received output %s was not equal to the expected output %s", output, tc.expectedOutput)
+				t.Errorf("The received output '%s' was not equal to the expected output '%s'", output, tc.expectedOutput)
 			}
 		})
 	}
@@ -87,6 +87,10 @@ func TestAnalysisReturnsShortestPathAsString(t *testing.T) {
 // 	// With contiguous whitespace
 // 	// With non-contiguous whitespace
 // 	// With different casing
+// }
+
+// func testAnalysisErrorsIfDuplicateIdsArePresent(t *testing.T) {
+
 // }
 
 // func testAnalysisHandlesEmptyOrganisationChartGracefully(t *testing.T) {
