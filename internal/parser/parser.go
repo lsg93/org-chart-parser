@@ -3,9 +3,7 @@ package parser
 import (
 	"bufio"
 	"errors"
-	"fmt"
 	"io"
-	"os"
 	"slices"
 	"strconv"
 	"strings"
@@ -23,12 +21,10 @@ type OrganisationChart = []Employee
 // Probably better to use an interface, and change implementations as necessary.
 type OrganisationChartParser interface {
 	Parse() (OrganisationChart, error)
-	validateHeader(string) bool
-	validateLine(string) ([]string, error) // Returned errors can be different.
-	marshalLine([]string) Employee
 }
 
 var (
+	errParserScanError         = errors.New("The input data could not be scanned line by line.")
 	errParserEmptyInput        = errors.New("Provided input to the parser was empty.")
 	errParserInvalidHeader     = errors.New("No header with appropriate column names was found in given input.")
 	errParserInvalidIdField    = errors.New("A problem was encountered when parsing the ID field - Check that your input has correct ID fields.")
@@ -52,6 +48,12 @@ func (parser *orgChartFileParser) Parse() (OrganisationChart, error) {
 	i := 0
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
+
+		// Skip empty lines - this accommodates leading whitespace.
+		if len(line) == 0 {
+			continue
+		}
+
 		if i == 0 {
 			// Split header and check it has correct column names
 			// If not, return error, as input is malformed.
@@ -79,12 +81,16 @@ func (parser *orgChartFileParser) Parse() (OrganisationChart, error) {
 		chart = append(chart, employee)
 	}
 
+	// If no scanner iterations took place, then the input was likely empty.
+	if i == 0 {
+		return chart, errParserEmptyInput
+	}
+
 	if err := scanner.Err(); err != nil {
-		fmt.Fprintln(os.Stderr, "reading standard input:", err)
+		return chart, errParserScanError
 	}
 
 	return chart, nil
-
 }
 
 func (parser *orgChartFileParser) validateHeader(headerLine string) bool {
@@ -107,7 +113,7 @@ func (parser *orgChartFileParser) validateLine(line string) ([]string, error) {
 	}
 
 	employeeId := s[0]
-	name := s[0]
+	name := s[1]
 	managerId := s[2]
 
 	// Edge case for empty rows
@@ -119,11 +125,25 @@ func (parser *orgChartFileParser) validateLine(line string) ([]string, error) {
 		return nil, errParserInvalidIdField
 	}
 
+	// Check employee ID is numeric.
+	if _, err := strconv.Atoi(s[0]); err != nil {
+		return nil, errParserInvalidIdField
+	}
+
+	// Check manager ID is numeric.
+	if _, err := strconv.Atoi(s[2]); err != nil {
+		// Only error if the error occurs when the manager ID is not blank.
+		if s[2] != "" {
+			return nil, errParserInvalidIdField
+		}
+	}
+
 	return s, nil
 }
 
 func (parser *orgChartFileParser) marshalLine(s []string) Employee {
-	// Fairly confident the errors can be ignored, as they'd be zero values in the struct if invalid.
+	// Fairly confident the errors can be ignored, as input should have been validated @ this point.
+	// This could be better though I think.
 	employeeId, _ := strconv.Atoi(s[0])
 	name := s[1]
 	managerId, _ := strconv.Atoi(s[2])
@@ -141,8 +161,6 @@ func (parser *orgChartFileParser) marshalLine(s []string) Employee {
 
 func lowercaseSlice(s []string) []string {
 	ls := []string{}
-
-	fmt.Println(strings.Join(s, ","))
 
 	for i := range s {
 		ls = append(ls, strings.ToLower(s[i]))
