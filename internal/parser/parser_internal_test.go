@@ -4,6 +4,8 @@ import (
 	"slices"
 	"strings"
 	"testing"
+
+	"github.com/lsg93/org-chart-parser/internal/model"
 )
 
 func setupParser(input string, t *testing.T) OrganisationChartParser {
@@ -20,7 +22,7 @@ func TestParsesOrgChartTextSuccesfully(t *testing.T) {
 
 	type testCase struct {
 		input          string
-		expectedResult OrganisationChart
+		expectedResult model.OrganisationChart
 	}
 
 	testCases := map[string]testCase{
@@ -29,10 +31,10 @@ func TestParsesOrgChartTextSuccesfully(t *testing.T) {
 			|1|Lawrence||
 			|2|Adrian|1|
 			|3|Joshua|2|`,
-			expectedResult: OrganisationChart{
-				Employee{id: 1, name: "Lawrence", managerId: 0},
-				Employee{id: 2, name: "Adrian", managerId: 1},
-				Employee{id: 3, name: "Joshua", managerId: 2},
+			expectedResult: model.OrganisationChart{
+				model.Employee{Id: 1, Name: "Lawrence", ManagerId: 0},
+				model.Employee{Id: 2, Name: "Adrian", ManagerId: 1},
+				model.Employee{Id: 3, Name: "Joshua", ManagerId: 2},
 			},
 		},
 		"with example data (whitespace)": {
@@ -40,10 +42,10 @@ func TestParsesOrgChartTextSuccesfully(t *testing.T) {
 			| 1 | Lawrence | |
 			| 2 | Adrian | 1 |
 			| 3 | Joshua | 2 |`,
-			expectedResult: OrganisationChart{
-				Employee{id: 1, name: "Lawrence", managerId: 0},
-				Employee{id: 2, name: "Adrian", managerId: 1},
-				Employee{id: 3, name: "Joshua", managerId: 2},
+			expectedResult: model.OrganisationChart{
+				model.Employee{Id: 1, Name: "Lawrence", ManagerId: 0},
+				model.Employee{Id: 2, Name: "Adrian", ManagerId: 1},
+				model.Employee{Id: 3, Name: "Joshua", ManagerId: 2},
 			},
 		},
 		"with missing rows": {
@@ -51,9 +53,9 @@ func TestParsesOrgChartTextSuccesfully(t *testing.T) {
 			|1 | Lawrence | |
 			|  |  |  |
 			|3|Joshua|2|`,
-			expectedResult: OrganisationChart{
-				Employee{id: 1, name: "Lawrence", managerId: 0},
-				Employee{id: 3, name: "Joshua", managerId: 2},
+			expectedResult: model.OrganisationChart{
+				model.Employee{Id: 1, Name: "Lawrence", ManagerId: 0},
+				model.Employee{Id: 3, Name: "Joshua", ManagerId: 2},
 			},
 		},
 		"with leading whitespace": {
@@ -62,9 +64,9 @@ func TestParsesOrgChartTextSuccesfully(t *testing.T) {
 			|1 | Lawrence | |
 			|  |  |  |
 			|3|Joshua|2|`,
-			expectedResult: OrganisationChart{
-				Employee{id: 1, name: "Lawrence", managerId: 0},
-				Employee{id: 3, name: "Joshua", managerId: 2},
+			expectedResult: model.OrganisationChart{
+				model.Employee{Id: 1, Name: "Lawrence", ManagerId: 0},
+				model.Employee{Id: 3, Name: "Joshua", ManagerId: 2},
 			},
 		},
 	}

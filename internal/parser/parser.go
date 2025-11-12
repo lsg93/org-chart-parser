@@ -7,21 +7,15 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+
+	"github.com/lsg93/org-chart-parser/internal/model"
 )
-
-type Employee struct {
-	id        int
-	name      string
-	managerId int
-}
-
-type OrganisationChart = []Employee
 
 // Not going to be used now, but if doing this properly, you'd probably want to not couple too tightly to files.
 // Probably better to use an interface, and change implementations as necessary.
 // In a real project, to aid OCP it would probably be better to split the parsing logic out from this contract into a separate file - e.g. file_parser.go
 type OrganisationChartParser interface {
-	Parse() (OrganisationChart, error)
+	Parse() (model.OrganisationChart, error)
 }
 
 var (
@@ -41,8 +35,8 @@ func NewOrganisationChartParser(input io.Reader) (OrganisationChartParser, error
 
 }
 
-func (parser *orgChartFileParser) Parse() (OrganisationChart, error) {
-	chart := OrganisationChart{}
+func (parser *orgChartFileParser) Parse() (model.OrganisationChart, error) {
+	chart := model.OrganisationChart{}
 
 	scanner := bufio.NewScanner(parser.input)
 
@@ -142,17 +136,17 @@ func (parser *orgChartFileParser) validateLine(line string) ([]string, error) {
 	return s, nil
 }
 
-func (parser *orgChartFileParser) marshalLine(s []string) Employee {
+func (parser *orgChartFileParser) marshalLine(s []string) model.Employee {
 	// Fairly confident the errors can be ignored, as input should have been validated @ this point.
 	// This could be better though I think.
 	employeeId, _ := strconv.Atoi(s[0])
 	name := s[1]
 	managerId, _ := strconv.Atoi(s[2])
 
-	employee := Employee{
-		id:        employeeId,
-		name:      name,
-		managerId: managerId,
+	employee := model.Employee{
+		Id:        employeeId,
+		Name:      name,
+		ManagerId: managerId,
 	}
 
 	return employee
