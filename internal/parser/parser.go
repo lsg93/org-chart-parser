@@ -19,6 +19,7 @@ type OrganisationChart = []Employee
 
 // Not going to be used now, but if doing this properly, you'd probably want to not couple too tightly to files.
 // Probably better to use an interface, and change implementations as necessary.
+// In a real project, to aid OCP it would probably be better to split the parsing logic out from this contract into a separate file - e.g. file_parser.go
 type OrganisationChartParser interface {
 	Parse() (OrganisationChart, error)
 }
