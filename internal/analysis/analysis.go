@@ -192,6 +192,7 @@ func (a *organisationChartAnalyser) pathToString(path []int) (strings.Builder, e
 }
 
 func (a *organisationChartAnalyser) validateNames(name1 string, name2 string) error {
+	// Making an assumption here - I think working on duplicate name inputs is quite messy.
 	if name1 == name2 {
 		return errAnalysisDuplicateNameArgument
 	}
