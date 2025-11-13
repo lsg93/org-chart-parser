@@ -89,7 +89,7 @@ func (parser *orgChartFileParser) Parse() (model.OrganisationChart, error) {
 }
 
 func (parser *orgChartFileParser) validateHeader(headerLine string) bool {
-	headerNames := []string{"employee id", "name", "manager id"}
+	headerNames := []string{"id", "name", "manager id"}
 	colNames := normaliseLineSlice(strings.Split(headerLine, "|"))
 
 	if len(colNames) != 3 {

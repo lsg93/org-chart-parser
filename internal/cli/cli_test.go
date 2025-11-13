@@ -2,7 +2,7 @@ package cli
 
 import "testing"
 
-// TODOIntegration test, do last.
+// TODO Integration test, do last.
 func TestCliInputReturnsExpectedOutput(t *testing.T) {}
 
 // TODO Integration test, do last.
