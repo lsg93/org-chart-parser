@@ -28,36 +28,36 @@ func Run() {
 	input, err := parseArguments()
 
 	if err != nil {
-		fmt.Println(err)
+		fmt.Fprintln(os.Stderr, "Error:", err)
 		os.Exit(1)
 	}
 
 	data, err := readFile(input.filepath)
 
 	if err != nil {
-		fmt.Println(err)
+		fmt.Fprintln(os.Stderr, "Error:", err)
 		os.Exit(1)
 	}
 
 	parser, err := parser.NewOrganisationChartParser(bytes.NewReader(data))
 
 	if err != nil {
-		fmt.Println(err)
+		fmt.Fprintln(os.Stderr, "Error:", err)
 		os.Exit(1)
 	}
 
 	chart, err := parser.Parse()
 
 	if err != nil {
-		fmt.Println(err)
+		fmt.Fprintln(os.Stderr, "Error:", err)
 		os.Exit(1)
 	}
 
-	analyser := analysis.NewOrganisationChartAnalyser(os.Stdin, chart)
+	analyser := analysis.NewOrganisationChartAnalyser(os.Stdout, chart)
 	err = analyser.Analyse(input.firstEmployeeName, input.secondEmployeeName)
 
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Fprintln(os.Stderr, "Error:", err)
 		os.Exit(1)
 	}
 }
