@@ -5,7 +5,7 @@ This is my attempt at using a breadth first search to find the shortest path bet
 The application requires exactly three arguments: [filepath] [start name] [target name]
 
 You can clone this repo, and in your terminal run the command with your desired arguments, for example:
-- `go run main.go example.txt Catwoman "Invisible Woman"`
+- `go run main.go example.txt "Scarlet Witch" Daredevil`
 
 Alternatively, you can clone the repo, build the binary, and then run it in a similar fashion to above:
 - `go build -o org-chart-parser main.go`
