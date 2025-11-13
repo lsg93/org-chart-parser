@@ -7,7 +7,7 @@ The application requires exactly three arguments: [filepath] [start name] [targe
 You can clone this repo, and in your terminal run the command with your desired arguments, for example:
 - `go run main.go example.txt Catwoman "Invisible Woman"`
 
-Alternatively, you can clone the repo, build the binary, and run it in a similar fashion:
+Alternatively, you can clone the repo, build the binary, and then run it in a similar fashion to above:
 - `go build -o org-chart-parser main.go`
 - `./org-chart-parser [filepath] "Employee A" "Employee B"`
 
