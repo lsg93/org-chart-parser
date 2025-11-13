@@ -27,7 +27,7 @@ func TestParsesOrgChartTextSuccesfully(t *testing.T) {
 
 	testCases := map[string]testCase{
 		"with example data": {
-			input: `|Employee ID|Name|Manager ID|
+			input: `|ID|Name|Manager ID|
 			|1|Lawrence||
 			|2|Adrian|1|
 			|3|Joshua|2|`,
@@ -38,7 +38,7 @@ func TestParsesOrgChartTextSuccesfully(t *testing.T) {
 			},
 		},
 		"with example data (whitespace)": {
-			input: `| Employee ID | Name | Manager ID |
+			input: `| ID | Name | Manager ID |
 			| 1 | Lawrence | |
 			| 2 | Adrian | 1 |
 			| 3 | Joshua | 2 |`,
@@ -49,7 +49,7 @@ func TestParsesOrgChartTextSuccesfully(t *testing.T) {
 			},
 		},
 		"with missing rows": {
-			input: `| Employee ID | Name | Manager ID |
+			input: `| ID | Name | Manager ID |
 			|1 | Lawrence | |
 			|  |  |  |
 			|3|Joshua|2|`,
@@ -60,7 +60,7 @@ func TestParsesOrgChartTextSuccesfully(t *testing.T) {
 		},
 		"with leading whitespace": {
 			input: `
-			| Employee ID | Name | Manager ID |
+			| ID | Name | Manager ID |
 			|1 | Lawrence | |
 			|  |  |  |
 			|3|Joshua|2|`,
@@ -78,7 +78,7 @@ func TestParsesOrgChartTextSuccesfully(t *testing.T) {
 			result, err := parser.Parse()
 
 			if err != nil {
-				t.Fatalf("There was an error %v parsing the provided the input data.", err)
+				t.Fatalf("There was an error '%s' parsing the provided the input data.", err)
 			}
 
 			if slices.Equal(result, tc.expectedResult) == false {
@@ -100,12 +100,12 @@ func TestFailsToParseWhenOrgChartTextIsInvalid(t *testing.T) {
 			expectedError: errParserEmptyInput,
 		},
 		"with too many fields": {
-			input: `| Employee ID | Name | Manager ID |
+			input: `| ID | Name | Manager ID |
 			| 1 | Lawrence | | value |`,
 			expectedError: errParserInvalidLineLength,
 		},
 		"with too few fields": {
-			input: `| Employee ID | Name | Manager ID |
+			input: `| ID | Name | Manager ID |
 			| 1 | Lawrence |`,
 			expectedError: errParserInvalidLineLength,
 		},
@@ -116,23 +116,23 @@ func TestFailsToParseWhenOrgChartTextIsInvalid(t *testing.T) {
 			expectedError: errParserInvalidHeader,
 		},
 		"with missing ID field": {
-			input: `| Employee ID | Name | Manager ID |
+			input: `| ID | Name | Manager ID |
 			| 1 | Lawrence | |
 			|  | Adrian | 1 |`,
 			expectedError: errParserInvalidIdField,
 		},
-		"with non numeric employee ID": {
-			input: `| Employee ID | Name | Manager ID |
+		"with non numeric ID": {
+			input: `| ID | Name | Manager ID |
 			| A | Lawrence | 1 |`,
 			expectedError: errParserInvalidIdField,
 		},
 		"with non numeric manager ID": {
-			input: `| Employee ID | Name | Manager ID |
+			input: `| ID | Name | Manager ID |
 			| 1 | Lawrence | A |`,
 			expectedError: errParserInvalidIdField,
 		},
 		"with self referential data": {
-			input: `| Employee ID | Name | Manager ID |
+			input: `| ID | Name | Manager ID |
 			| 1 | Lawrence | 1 |`,
 			expectedError: errParserInvalidIdField,
 		},

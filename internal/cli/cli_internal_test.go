@@ -49,7 +49,7 @@ func TestParsingInvalidCliArgumentsErrors(t *testing.T) {
 
 	testCases := map[string]testCase{
 		"When any/all arguments are empty": {
-			input:           []string{"", " "},
+			input:           []string{"", " ", " "},
 			expectedMessage: errArgValidationBlankArgumentProvided.Error(),
 		},
 		"When there are too few arguments": {
